@@ -8,18 +8,27 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: dist
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
+          cache-dependency-path: dist/pnpm-lock.yaml
+
+      - name: Ensure NuxtHub module is installed
+        run: pnpx nuxthub@latest ensure
 
       - name: Install dependencies
         run: pnpm install
@@ -27,4 +36,5 @@ jobs:
       - name: Build & Deploy to NuxtHub
         uses: nuxt-hub/action@v2
         with:
-          project-key: my-pull-request-rn5e
+          project-key: my-pull-request-evtv
+          directory: dist
